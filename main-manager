@@ -1,24 +1,26 @@
-server = list of servers with scripts;
+server = ["zer0", "silver-helix", "phantasy", "max-hardware", "iron-gym", "foodnstuff", "sigma-cosmetics", "joesguns", "nectar-net", "hong-fang-tea", "harakiri-sushi"];
 //find new servers with scan-analyze?
 
 while (true) {
     for (i=0; i<server.length; i++) {
     
-        curSecLev = getSecurityLevel(server[i]);
-        minSecLev = getMinSecurityLevel(server[i]);
+        curSecLev = getServerSecurityLevel(server[i]);
+        minSecLev = getServerMinSecurityLevel(server[i]);
         if (curSecLev > minSecLev*5/2) {
             killall(server[i]);
+            sleep(20000);
             exec("weak.script", server[i], Math.floor(getHostRam(server[i])/getScriptRam("weak.script", server[i])));
             tprint("Weakening " + server[i]);
         }
         
         mon = getServerMoneyAvailable(server[i]);
         monLim = getServerMaxMoney(server[i]);
-        if (mon < monLim*0.7 && !isRunning("weak.script", server[i])) {
+        if (mon < monLim*0.6 && !isRunning("weak.script", server[i])) {
             killall(server[i]);
-            exec("grow.script", server[i], );
+            sleep(20000);
+            exec("grow.script", server[i], Math.floor(getHostRam(server[i])/getScriptRam("grow.script", server[i])));
             tprint("Growing " + server[i]);
         }
     }
-    sleep(60000)
+    sleep(60000);
 }
