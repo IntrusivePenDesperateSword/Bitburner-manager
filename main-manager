@@ -1,17 +1,23 @@
 server = list of servers with scripts;
 //find new servers with scan-analyze?
+
 while (true) {
-    while (iteration over servers) {
+    for (i=0; i<server.length; i++) {
     
-        hcChr = getHackTime(server[i]);
-        if (hcChr > time limit) {
-          killall(server[i]);
-            exec("weak.script", server[i]);
-            //remove for the weak script to take care of?
+        curSecLev = getSecurityLevel(server[i]);
+        minSecLev = getMinSecurityLevel(server[i]);
+        if (curSecLev > minSecLev*5/2) {
+            killall(server[i]);
+            exec("weak.script", server[i], Math.floor(getHostRam(server[i])/getScriptRam("weak.script", server[i])));
+            tprint("Weakening " + server[i]);
         }
-        monLim = 
-        if () {
-            exec("grow.script", server[i]);
+        
+        mon = getServerMoneyAvailable(server[i]);
+        monLim = getServerMaxMoney(server[i]);
+        if (mon < monLim*0.7 && !isRunning("weak.script", server[i])) {
+            killall(server[i]);
+            exec("grow.script", server[i], );
+            tprint("Growing " + server[i]);
         }
     }
     sleep(60000)
