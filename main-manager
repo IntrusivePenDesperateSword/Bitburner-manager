@@ -8,8 +8,9 @@ while (true) {
         minSecLev = getServerMinSecurityLevel(server[i]);
         if (curSecLev > minSecLev*5/2) {
             killall(server[i]);
-            sleep(20000);
-            exec("weak.script", server[i], Math.floor(getServerRam(server[i])/getScriptRam("weak.script", server[i])));
+            sleep(5000);
+            scp("weak.script", server[i]);
+            exec("weak.script", server[i], Math.floor(getServerRam(server[i])[0]/getScriptRam("weak.script", server[i])));
             tprint("Weakening " + server[i]);
         }
         
@@ -17,8 +18,9 @@ while (true) {
         monLim = getServerMaxMoney(server[i]);
         if (mon < monLim*0.6 && !isRunning("weak.script", server[i])) {
             killall(server[i]);
-            sleep(20000);
-            exec("grow.script", server[i], Math.floor(getServerRam(server[i])/getScriptRam("grow.script", server[i])));
+            sleep(5000);
+            scp("grow.script", server[i]);
+            exec("grow.script", server[i], Math.floor(getServerRam(server[i])[0]/getScriptRam("grow.script", server[i])));
             tprint("Growing " + server[i]);
         }
     }
