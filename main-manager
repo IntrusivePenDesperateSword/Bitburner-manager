@@ -1,0 +1,15 @@
+server = list of servers with scripts;
+//find new servers with scan-analyze?
+
+while (iteration over servers) {
+    
+    hcChr = getHackTime(server[i]);
+    if (hcChr > time limit) {
+        killall(server[i]);
+        exec("weak.script", server[i]);
+        //remove for the weak script to take care of?
+    }
+    if (getServerRam(server[i])[0] - getServerRam(server[i])[1] > getScriptRam("grow.script", server[i])) {
+        exec("grow.script", server[i]);
+    }
+}
