@@ -1,0 +1,11 @@
+host = getHostname();
+tprint(getGrowTime(host));
+grow(host);
+
+hostRam = getServerRam(host)[0];
+scriptRam = getScriptRam("autohack.script", host);
+
+threads = Math.round(hostRam/scriptRam - 0.5);
+tprint("Finished growing " + host);
+
+spawn("autohack.script", threads, host);
