@@ -26,7 +26,7 @@ while (true) {
         || isRunning("grow.script", eng, server[i])))
         {
             print(server[i]+" isn't being worked on right now.");
-            exec("weak.script", eng, Math.floor((engRam*weakRat/secRamTotal)/getScriptRam("grow.script", eng)), server[i]);
+            exec("weak.script", eng, Math.floor((engRam*weakRat/secRamTotal)/getScriptRam("weak.script", eng)), server[i]);
                 
             exec("grow.script", eng, Math.floor((engRam*growRat/secRamTotal)/getScriptRam("grow.script", eng)), server[i]);
                 
