@@ -1,35 +1,39 @@
 server = ["zer0", "silver-helix", "phantasy", "max-hardware", "iron-gym", "sigma-cosmetics", "joesguns", "nectar-net", "hong-fang-tea", "harakiri-sushi", "omega-net"];
 eng = args[0];
-engRam = Math.floor((getServerRam(eng)[0]-getServerRam(eng)[1])/server.length);
+engRam = Math.floor(getServerRam(eng)[0]/server.length);
 //find new servers with scan-analyze?
 
+function hgwRat(e, s) {
+    hgRat = (getScriptIncome("hack.script", e, s)*(getHackTime(s)/getGrowTime(s))/
+    (getServerMoneyAvailable(s)*Math.exp(1.02/~~hackdifficulty~~, ~~growthrate~~/100) - getServerMoneyAvailable);
+    
+    deltaSec = 0.004 + hgRat*0.002;
+    hgwRat = 0.05/deltaSec;
+    
+    return [1, hgwRat, hgwRat*hgRat];
+}
 
 while (true) {
     for (i=0; i<server.length; i++) {
+        rats = hgwRat(eng, server[i]);
+        weakRat = rats[0];
+        growRat = rats[1];
+        hackRat = rats[2];
+        secRamTotal = weakRat + growRat + hackRat;
         
         if (!(isRunning("hack.script", eng, server[i]) 
         || isRunning("weak.script", eng, server[i])
         || isRunning("grow.script", eng, server[i])))
         {
             print(server[i]+" isn't being worked on right now.");
-            if (getServerSecurityLevel(server[i]) > getServerMinSecurityLevel(server[i])+10)
-            {
+            exec("weak.script", eng, Math.floor((engRam*weakRat/secRamTotal)/getScriptRam("grow.script", eng)), server[i]);
                 
-                exec("weak.script", eng, Math.floor(engRam/getScriptRam("weak.script", eng)), server[i]);
+            exec("grow.script", eng, Math.floor((engRam*growRat/secRamTotal)/getScriptRam("grow.script", eng)), server[i]);
                 
-            } else if (getServerMoneyAvailable(server[i]) < getServerMaxMoney(server[i])*0.5)
-            {
-                
-                exec("grow.script", eng, Math.floor(engRam/getScriptRam("grow.script", eng)), server[i]);
-                
-            } else
-            {
-                
-                exec("hack.script", eng, Math.floor(engRam/getScriptRam("hack.script", eng)), server[i]);
+            exec("hack.script", eng, Math.floor((engRam*hackRat/secRamTotal)/getScriptRam("hack.script", eng)), server[i]);
             
             }
         } else {print(server[i] + " is busy. Trying again next cycle.")}
         
     }
-    sleep(40000);
 }
