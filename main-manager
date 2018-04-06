@@ -5,7 +5,7 @@ engRam = Math.floor(getServerRam(eng)[0]/server.length);
 
 function hgwRat(e, s) {
     hgRat = (getScriptIncome("hack.script", e, s)*(getHackTime(s)/getGrowTime(s))/
-    (getServerMoneyAvailable(s)*Math.exp(1.02/~~hackdifficulty~~, ~~growthrate~~/100) - getServerMoneyAvailable);
+    (getServerMoneyAvailable(s)*Math.exp(1.02/getServerSecurityLevel(s), getServerGrowth(s)/100) - getServerMoneyAvailable);
     
     deltaSec = 0.004 + hgRat*0.002;
     hgwRat = 0.05/deltaSec;
