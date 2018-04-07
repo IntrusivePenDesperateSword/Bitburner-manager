@@ -1,26 +1,31 @@
 host = getHostname();
-forb = ["home", "tBIG", "2T-core", "4T-core", "darkweb"];
+forb = ["home", "tBIG", "2T-core", "4T-core", "black-hole", "darkweb"];
 scanned = [];
 
+lvls = [];
 
-while (true) {
-    next = scan(host);
-    for (i=0; i<next.length; i++) {
-        if (!(scanned.includes(next[i])
-            ||forb.includes(next[i])
-            ||getServerRequiredHackingLevel(next[i])>getHackingLevel())) {
-        
-            scanned = scanned + next[i];
-        
-            write(1, next[i]);
-        
-            if (!hasRootAccess(next[i])) {
-                exec("access.script", "home", 1, next[i]);
-            }
-        
-        
-        }
+function scanLevel(lv, host) {
+    lvls[lv] = scan(host);
+    lvlC = lvls[lv];
     
-        host = next[i]
+    for (i=0; i<lvlC.length; i++) {
+        if (!(scanned.includes(lvlC[i])
+            ||forb.includes(lvlC[i])
+            ||getServerRequiredHackingLevel(lvlC[i])>getHackingLevel())) {
+            
+            print("HEY! This server is new. Adding to list.");
+            
+            scanned.push(lvlC[i]);
+        
+            write("servers.txt", lvlC[i], "w");
+        
+            if (!hasRootAccess(lvlC[i])) {
+                exec("access.script", "home", 1, lvlC[i]);
+            }
+            
+            scanLevel(lv+1, lvlC[i]);
+        }
     }
 }
+scanLevel(0, host);
+tprint(scanned);
