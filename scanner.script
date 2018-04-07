@@ -1,0 +1,26 @@
+host = getHostname();
+forb = ["home", "tBIG", "2T-core", "4T-core", "darkweb"];
+scanned = [];
+
+
+while (true) {
+    next = scan(host);
+    for (i=0; i<next.length; i++) {
+        if (!(scanned.includes(next[i])
+            ||forb.includes(next[i])
+            ||getServerRequiredHackingLevel(next[i])>getHackingLevel())) {
+        
+            scanned = scanned + next[i];
+        
+            write(1, next[i]);
+        
+            if (!hasRootAccess(next[i])) {
+                exec("access.script", "home", 1, next[i]);
+            }
+        
+        
+        }
+    
+        host = next[i]
+    }
+}
