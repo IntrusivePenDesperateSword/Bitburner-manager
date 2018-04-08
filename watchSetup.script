@@ -1,0 +1,10 @@
+engs = getPurchasedServers();
+
+for (i=0; i<engs.length; i++) {
+    if (!fileExists("hack.script")){
+        scp("hack.script", engs[i]);
+        scp("weak.script", engs[i]);
+        scp("grow.script", engs[i]);
+    }
+    run("watchtower.script", 1, engs[i]);
+}
