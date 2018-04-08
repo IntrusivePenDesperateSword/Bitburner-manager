@@ -4,8 +4,10 @@ engRam = Math.floor(getServerRam(eng)[0]/server.length);
 //find new servers with scan-analyze?
 
 function hgwRat(e, s) {
-    hgRat = (getScriptIncome("hack.script", e, s)*(getHackTime(s)/getGrowTime(s))/
-    (getServerMoneyAvailable(s)*Math.pow(1.02/getServerSecurityLevel(s), getServerGrowth(s)/100) - getServerMoneyAvailable(s)));
+    hackReturn = ((100-getServerSecurityLevel(s))/100)*((getHackingLevel()-getServerRequiredHackingLevel(s)+1)/getHackingLevel())*(getHackingMultipliers().money/2)*(getServerMoneyAvailable(s)/100);
+    hgRat = hackReturn*(getHackTime(s)/getGrowTime(s))/
+    (getServerMoneyAvailable(s)*(
+    Math.pow(102/(100-getServerSecurityLevel(s)), getServerGrowth(s)/100) - 1));
     
     deltaSec = 0.004 + hgRat*0.002;
     hgwRat = 0.05/deltaSec;
