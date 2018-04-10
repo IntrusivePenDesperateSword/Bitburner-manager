@@ -1,18 +1,24 @@
-server = ["zer0", "silver-helix", "phantasy", "max-hardware", "iron-gym", "sigma-cosmetics", "joesguns", "nectar-net", "hong-fang-tea", "harakiri-sushi", "omega-net"];
+server = read("scans.txt").split(",");
 eng = args[0];
 engRam = Math.floor(getServerRam(eng)[0]/server.length);
-//find new servers with scan-analyze?
+
+function calculateHackPercentage(serverName) {
+    return ((100-getServerSecurityLevel(serverName))/100)
+    *((getHackingLevel()-getServerRequiredHackingLevel(serverName)+1)/getHackingLevel())
+    *(getHackingMultipliers().money/240)/100;
+}
+
 
 function hgwRat(e, s) {
-    hackReturn = ((100-getServerSecurityLevel(s))/100)*((getHackingLevel()-getServerRequiredHackingLevel(s)+1)/getHackingLevel())*(getHackingMultipliers().money/2)*(getServerMoneyAvailable(s)/100);
+    hackReturn = calculateHackPercentage(s)*getServerMoneyAvailable(s);
     hgRat = hackReturn*(getHackTime(s)/getGrowTime(s))/
     (getServerMoneyAvailable(s)*(
     Math.pow(102/(100-getServerSecurityLevel(s)), getServerGrowth(s)/100) - 1));
     
     deltaSec = 0.004 + hgRat*0.002;
-    hgwRat = 0.05/deltaSec;
+    totRat = deltaSec/0.05;
     
-    return [1, hgwRat, hgwRat*hgRat];
+    return [1, totRat, totRat*hgRat];
 }
 
 while (true) {
@@ -25,17 +31,18 @@ while (true) {
         
         if (!(isRunning("hack.script", eng, server[i]) 
         || isRunning("weak.script", eng, server[i])
-        || isRunning("grow.script", eng, server[i])))
-        {
-            print(server[i]+" isn't being worked on right now.");
+        || isRunning("grow.script", eng, server[i]))){
+            
+            tprint(rats + " is the ratio of w/g/h. The engine has "+engRam+" to distribute in this fashion. Weak takes "+getScriptRam("weak.script", eng)+" GB, and gets "+Math.floor((engRam*weakRat/secRamTotal)/getScriptRam("weak.script", eng))+" threads.");
             exec("weak.script", eng, Math.floor((engRam*weakRat/secRamTotal)/getScriptRam("weak.script", eng)), server[i]);
-                
+            
+            tprint("grow gets "+Math.floor((engRam*growRat/secRamTotal)/getScriptRam("grow.script", eng))+" threads.");    
             exec("grow.script", eng, Math.floor((engRam*growRat/secRamTotal)/getScriptRam("grow.script", eng)), server[i]);
-                
+            
+            tprint("hack gets "+Math.floor((engRam*hackRat/secRamTotal)/getScriptRam("hack.script", eng))+" threads.")
             exec("hack.script", eng, Math.floor((engRam*hackRat/secRamTotal)/getScriptRam("hack.script", eng)), server[i]);
             
-            }
-            else {print(server[i] + " is busy. Trying again next cycle.")}
-        } 
-    }
-
+        }
+        else {print(server[i] + " is busy. Trying again next cycle.")}
+    } 
+}
