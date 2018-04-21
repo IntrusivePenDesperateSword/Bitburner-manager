@@ -1,31 +1,45 @@
 host = getHostname();
-forb = ["home", "tBIG", "2T-core", "4T-core", "black-hole", "darkweb"];
+forb = ["home", "darkweb"].concat(getPurchasedServers());
 scanned = [];
 
 lvls = [];
+hlv = getHackingLevel();
+
+ports = 0;
+files = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", "SQLInject.exe"];
+for (i=0; i<files.length; i++) {
+    if (fileExists(files[i], "home")){
+        ports += 1;
+    }
+}
+
 
 function scanLevel(lv, host) {
     lvls[lv] = scan(host);
     lvlC = lvls[lv];
     
     for (i=0; i<lvlC.length; i++) {
+        print("Currently scanning "+lvlC[i]+", which has the following connections: "+scan(lvlC[i]));
         if (!(scanned.includes(lvlC[i])
             ||forb.includes(lvlC[i])
-            ||getServerRequiredHackingLevel(lvlC[i])>getHackingLevel())) {
+            ||getServerRequiredHackingLevel(lvlC[i])>hlv
+            ||getServerMoneyAvailable(lvlC[i])===0.0
+            ||getServerMoneyAvailable(lvlC[i])===0)) {
             
-            print("HEY! This server is new. Adding to list.");
+            print("This server is new. Adding to list.");
             
             scanned.push(lvlC[i]);
         
-            write("servers.txt", lvlC[i], "w");
-        
-            if (!hasRootAccess(lvlC[i])) {
+            if (!hasRootAccess(lvlC[i]) && getServerNumPortsRequired(lvlC[i])<=ports) {
                 exec("access.script", "home", 1, lvlC[i]);
+                print("This server is so new, it hasn't even been rooted yet.");
             }
-            
+            print("Moving on to level "+lv+1+".")
             scanLevel(lv+1, lvlC[i]);
         }
     }
 }
 scanLevel(0, host);
 tprint(scanned);
+
+write("scans.txt", scanned, "w");
