@@ -13,33 +13,21 @@ for (i=0; i<files.length; i++) {
     }
 }
 
-
-function scanLevel(lv, host) {
-    lvls[lv] = scan(host);
-    lvlC = lvls[lv];
-    
-    for (i=0; i<lvlC.length; i++) {
-        print("Currently scanning "+lvlC[i]+", which has the following connections: "+scan(lvlC[i]));
-        if (!(scanned.includes(lvlC[i])
-            ||forb.includes(lvlC[i])
-            ||getServerRequiredHackingLevel(lvlC[i])>hlv
-            ||getServerMoneyAvailable(lvlC[i])===0.0
-            ||getServerMoneyAvailable(lvlC[i])===0)) {
-            
-            print("This server is new. Adding to list.");
-            
-            scanned.push(lvlC[i]);
-        
-            if (!hasRootAccess(lvlC[i]) && getServerNumPortsRequired(lvlC[i])<=ports) {
-                exec("access.script", "home", 1, lvlC[i]);
-                print("This server is so new, it hasn't even been rooted yet.");
+next = scan(host);
+i = 0;
+while (i<next.length)
+{
+    if (!(forb.includes(next[i])
+        ||getServerNumPortsRequired(next[i])<=ports
+        ||getServerRequiredHackingLevel(next[i])<=hlv)){
+        temp=[].concat(scan(next[i]));
+        scanned.push(next[i]);
+        for (j=0;j<temp.length;j++){
+            if (!scanned.includes(temp[j])){
+                next.push(temp[j]);
             }
-            print("Moving on to level "+lv+1+".")
-            scanLevel(lv+1, lvlC[i]);
         }
     }
+    i++;
 }
-scanLevel(0, host);
-tprint(scanned);
-
-write("scans.txt", scanned, "w");
+write("scans",scanned,"w");
